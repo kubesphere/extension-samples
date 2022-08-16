@@ -1,0 +1,9 @@
+{
+  "name": "Name",
+  "EMPLOYEE_MANAGEMENT": "Employee Management",
+  "EMPLOYEE_DESC": "View employee information, add employee, modify employee information, delete employee",
+  "EMPLOYEE_DELETED": "Departing Employees",
+  "Age": "Age",
+  "Name": "Name",
+  "NAME_HELP": "Please enter the name of the employee"
+}

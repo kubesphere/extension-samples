@@ -1,0 +1,15 @@
+{
+  "name": "employee",
+  "description": "Employee management system",
+  "keywords": [
+    "Performance"
+  ],
+  "author": "chenzhen",
+  "version": "1.0.0",
+  "homepage": "",
+  "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "dependencies": {}
+}
