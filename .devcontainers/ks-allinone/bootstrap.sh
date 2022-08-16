@@ -8,7 +8,11 @@
     echo "************************************"
 
     for image in $(ls /kubesphere/images/*.tar); do ctr i import ${image}; done
-
+    
+    # rancher/mirrored-coredns-coredns:1.9.1 not support multi arch
+    ctr i tag docker.io/coredns/coredns:1.8.7 docker.io/rancher/mirrored-coredns-coredns:1.9.1 && \
+    ctr i rm docker.io/coredns/coredns:1.8.7
+ 
     echo "************************************"
     echo     2. Launching KubeSphere
     echo "************************************"
@@ -22,9 +26,10 @@
     --set image.ks_controller_manager_repo=kubespheredev/ks-controller-manager \
     --set image.ks_controller_manager_tag=feature-pluggable \
     --set image.ks_console_repo=kubespheredev/ks-console \
+    --set image.ks_console_tag=feature-pluggable \
     --set apiserver.nodePort=30881 \
-    --set image.ks_console_tag=feature-pluggable
-
+    --set image.pullPolicy=Always
+    
 ) </dev/null 2>&1 1>nohup.out &
 
 #########################################################################################################################################
