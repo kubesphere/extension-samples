@@ -1,3 +1,5 @@
+# See https://help.github.com/ignore-files/ for more about ignoring files.
+
 # dependencies
 node_modules
 
@@ -19,3 +21,9 @@ yarn-debug.log*
 yarn-error.log*
 
 .idea/
+
+# local config
+/configs/local_config.yaml
+
+*.rdb
+.cache-loader
