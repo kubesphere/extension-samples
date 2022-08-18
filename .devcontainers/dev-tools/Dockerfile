@@ -22,6 +22,6 @@ RUN apk update && apk add \
    mv ./linux-amd64//helm /usr/local/bin/helm
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
-WORKDIR /Workspace/kubesphere
+WORKDIR /workspace/kubesphere
 
 ENTRYPOINT ["entrypoint.sh"]
