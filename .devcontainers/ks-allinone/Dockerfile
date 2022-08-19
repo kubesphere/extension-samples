@@ -31,7 +31,7 @@ RUN if [[ $(arch) == aarch64* ]]; then ARCH=arm64; fi && \
     chmod +x ./helm
 
 
-FROM rancher/k3s:v1.24.3-k3s1
+FROM rancher/k3s:v1.23.9-k3s1
 
 WORKDIR /kubesphere
 
