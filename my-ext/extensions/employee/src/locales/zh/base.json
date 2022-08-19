@@ -1,9 +1,0 @@
-{
-  "Employee": "员工",
-  "EMPLOYEE_MANAGEMENT": "员工管理",
-  "EMPLOYEE_DESC": "查看员工信息，添加员工，修改员工信息，删除员工",
-  "EMPLOYEE_DELETED": "离职员工",
-  "Age": "年龄",
-  "Name": "姓名",
-  "NAME_HELP": "请输入姓名"
-}
