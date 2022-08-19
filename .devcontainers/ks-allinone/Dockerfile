@@ -43,6 +43,9 @@ ADD bootstrap.sh /bin/bootstrap.sh
 
 RUN chmod +x /bin/bootstrap.sh
 
+HEALTHCHECK --interval=5s --timeout=3s \
+  CMD wget -qO- http://localhost:30881/kapis/version || exit 1
+
 ENTRYPOINT ["bootstrap.sh"]
 
 
