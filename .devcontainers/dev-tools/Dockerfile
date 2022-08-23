@@ -1,5 +1,11 @@
 FROM node:lts-alpine
 
+ARG TARGETARCH
+ARG TARGETOS
+ARG HELM_VERSION=v3.9.3
+ARG KUBECTL_VERSION=v1.23.9
+ARG KSBUILDER_VERSION=0.0.1-alpha5
+
 RUN apk update && apk add \
    bash \
    bash-completion \
@@ -8,21 +14,21 @@ RUN apk update && apk add \
    ca-certificates && \
    update-ca-certificates && \
    rm -rf /var/cache/apk/* && \
-   curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.23.9/bin/linux/amd64/kubectl && \
+   TMPDIR=$(mktemp -d);cd $TMPDIR && \
+   curl -LO https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/${TARGETOS}/${TARGETARCH}/kubectl && \
    chmod +x ./kubectl && \
    mv ./kubectl /usr/local/bin/kubectl && \
    echo -e 'source /usr/share/bash-completion/bash_completion\nsource <(kubectl completion bash)' >>~/.bashrc && \
-   curl -LO https://github.com/kubesphere/ksbuilder/releases/download/v0.0.1-alpha5/ksbuilder_0.0.1-alpha5_linux_amd64.tar.gz && \
-   tar -xzf ksbuilder_0.0.1-alpha5_linux_amd64.tar.gz && \
+   curl -LO https://github.com/kubesphere/ksbuilder/releases/download/v${KSBUILDER_VERSION}/ksbuilder_${KSBUILDER_VERSION}_${TARGETOS}_${TARGETARCH}.tar.gz && \
+   tar -xzf ksbuilder_${KSBUILDER_VERSION}_${TARGETOS}_${TARGETARCH}.tar.gz && \
    chmod +x ./ksbuilder && \
    mv ./ksbuilder /usr/local/bin/ksbuilder && \
-   curl -LO https://get.helm.sh/helm-v3.9.3-linux-amd64.tar.gz && \
-   tar -xzvf helm-v3.9.3-linux-amd64.tar.gz && \
-   chmod +x ./linux-amd64//helm && \
-   mv ./linux-amd64//helm /usr/local/bin/helm && \
-   yarn config set registry https://registry.npm.taobao.org/
+   curl -LO https://get.helm.sh/helm-${HELM_VERSION}-${TARGETOS}-${TARGETARCH}.tar.gz && \
+   tar -xzvf helm-${HELM_VERSION}-${TARGETOS}-${TARGETARCH}.tar.gz && \
+   chmod +x ./${TARGETOS}-${TARGETARCH}/helm && \
+   mv ./${TARGETOS}-${TARGETARCH}/helm /usr/local/bin/helm && \
+   rm -rf $TMPDIR
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
-WORKDIR /workspace/kubesphere
 
 ENTRYPOINT ["entrypoint.sh"]
