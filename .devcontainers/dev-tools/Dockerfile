@@ -12,8 +12,8 @@ RUN apk update && apk add \
    chmod +x ./kubectl && \
    mv ./kubectl /usr/local/bin/kubectl && \
    echo -e 'source /usr/share/bash-completion/bash_completion\nsource <(kubectl completion bash)' >>~/.bashrc && \
-   curl -LO https://github.com/kubesphere/ksbuilder/releases/download/v0.0.1-alpha4/ksbuilder_0.0.1-alpha4_linux_amd64.tar.gz && \
-   tar -xzf ksbuilder_0.0.1-alpha4_linux_amd64.tar.gz && \
+   curl -LO https://github.com/kubesphere/ksbuilder/releases/download/v0.0.1-alpha5/ksbuilder_0.0.1-alpha5_linux_amd64.tar.gz && \
+   tar -xzf ksbuilder_0.0.1-alpha5_linux_amd64.tar.gz && \
    chmod +x ./ksbuilder && \
    mv ./ksbuilder /usr/local/bin/ksbuilder && \
    curl -LO https://get.helm.sh/helm-v3.9.3-linux-amd64.tar.gz && \
