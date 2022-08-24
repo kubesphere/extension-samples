@@ -6,7 +6,6 @@ ENV KUBESPHERE_VERSION=feature-pluggable
 ENV KUBESPHERE_APISERVER=kubespheredev/ks-apiserver:$KUBESPHERE_VERSION
 ENV KUBESPHERE_CONTROLLER_MANAGER=kubespheredev/ks-controller-manager:$KUBESPHERE_VERSION
 ENV KUBESPHERE_CONSOLE=kubespheredev/ks-console:$KUBESPHERE_VERSION
-ENV DEFAULTBACKEND=kubespheredev/defaultbackend:1.4
 ENV KUBECTL=kubesphere/kubectl:latest
 ENV COREDNS=coredns/coredns:1.8.7
 ENV LOCAL_PATH_PROVISIONER=rancher/local-path-provisioner:v0.0.21
@@ -20,7 +19,7 @@ RUN  git clone --branch feature-pluggable --depth=1 https://github.com/kubespher
 
 ADD download-frozen-image-v2.sh .
 
-RUN mkdir images && echo -e "$KUBESPHERE_APISERVER $KUBESPHERE_CONTROLLER_MANAGER $KUBESPHERE_CONSOLE $DEFAULTBACKEND $KUBECTL $COREDNS $LOCAL_PATH_PROVISIONER" | \
+RUN mkdir images && echo -e "$KUBESPHERE_APISERVER $KUBESPHERE_CONTROLLER_MANAGER $KUBESPHERE_CONSOLE $KUBECTL $COREDNS $LOCAL_PATH_PROVISIONER" | \
     xargs -t -n1 bash download-frozen-image-v2.sh
 
 RUN if [[ $(arch) == aarch64* ]]; then ARCH=arm64; fi && \

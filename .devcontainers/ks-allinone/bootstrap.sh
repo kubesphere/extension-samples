@@ -27,7 +27,6 @@
     --set image.ks_controller_manager_tag=feature-pluggable \
     --set image.ks_console_repo=kubespheredev/ks-console \
     --set image.ks_console_tag=feature-pluggable \
-    --set defaultbackend_repo=kubespheredev/defaultbackend \
     --set apiserver.nodePort=30881 \
     --set image.pullPolicy=Always
     
