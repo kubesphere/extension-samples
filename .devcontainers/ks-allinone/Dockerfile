@@ -8,7 +8,7 @@ ENV KUBESPHERE_CONTROLLER_MANAGER=kubespheredev/ks-controller-manager:$KUBESPHER
 ENV KUBESPHERE_CONSOLE=kubespheredev/ks-console:$KUBESPHERE_VERSION
 ENV DEFAULTBACKEND=mirrorgooglecontainers/defaultbackend-amd64:1.4
 ENV KUBECTL=kubesphere/kubectl:latest
-ENV COREDNS=rancher/mirrored-coredns-coredns:1.9.1
+ENV COREDNS=coredns/coredns:1.8.7
 ENV LOCAL_PATH_PROVISIONER=rancher/local-path-provisioner:v0.0.21
 
 WORKDIR /workspace
