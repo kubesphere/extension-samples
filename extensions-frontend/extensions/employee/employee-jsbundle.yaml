@@ -1,0 +1,10 @@
+apiVersion: extensions.kubesphere.io/v1alpha1
+kind: JSBundle
+metadata:
+  name: v1alpha1.employee.kubesphere.io
+spec:
+  rawFrom:
+    url: http://employee-frontend.default.svc/dist/employee-frontend/index.js
+status:
+  state: Available
+  link: /dist/employee-frontend/index.js
