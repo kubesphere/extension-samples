@@ -5,6 +5,7 @@ ARG TARGETOS
 ARG HELM_VERSION=v3.9.3
 ARG KUBECTL_VERSION=v1.23.9
 ARG KSBUILDER_VERSION=0.0.1-alpha5
+ARG YARN_REGISTRY=https://registry.npmmirror.com/
 
 RUN apk update && apk add \
    bash \
@@ -28,6 +29,8 @@ RUN apk update && apk add \
    chmod +x ./${TARGETOS}-${TARGETARCH}/helm && \
    mv ./${TARGETOS}-${TARGETARCH}/helm /usr/local/bin/helm && \
    rm -rf $TMPDIR
+
+RUN yarn config set ${YARN_REGISTRY}
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 
