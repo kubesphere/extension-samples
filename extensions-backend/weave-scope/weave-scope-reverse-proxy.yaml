@@ -1,0 +1,16 @@
+apiVersion: extensions.kubesphere.io/v1alpha1
+kind: ReverseProxy
+metadata:
+  name: weave.works
+spec:
+  directives:
+    headerUp:
+    - -Authorization
+    stripPathPrefix: /proxy/weave.works
+  matcher:
+    method: '*'
+    path: /proxy/weave.works/*
+  upstream:
+    url: http://weave-scope-app.weave.svc
+status:
+  state: Available
