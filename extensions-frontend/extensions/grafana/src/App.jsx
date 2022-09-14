@@ -10,9 +10,7 @@ export default function App() {
   const onIframeLoad = () => {
     const iframeDom = iframeRef.current?.contentWindow.document;
     if (iframeDom) {
-      // if (iframeDom.querySelector('#app > div > div.header > div')) {
-      //   iframeDom.querySelector('#app > div > div.header > div').style.display = 'none';
-      // }
+      // do something
     }
     setLoading(false);
   };
