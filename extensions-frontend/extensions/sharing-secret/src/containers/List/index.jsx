@@ -1,10 +1,11 @@
 import React, { useState, useRef } from 'react';
 import { useMutation } from 'react-query';
 import styled from 'styled-components';
-import { Link, Router } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import {
   Banner,
   Button,
+  Descriptions,
   Menu,
   MenuItem,
   Dropdown,
@@ -24,14 +25,43 @@ const FormWrapper = styled.div`
   padding: 15px 25px;
 `;
 
+const Description = styled.div`
+  margin-bottom: 12px;
+  font-family: Roboto, PingFang SC, Lantinghei SC, Helvetica Neue, Helvetica, Arial, Microsoft YaHei,
+    微软雅黑, STHeitiSC-Light, simsun, 宋体, WenQuanYi Zen Hei, WenQuanYi Micro Hei, sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: 1.67;
+  letter-spacing: normal;
+  color: #79879c;
+  word-break: break-all;
+`;
+
+const DetailInfo = styled.div`
+  padding: 12px;
+
+  .detail-title {
+    font-size: 14px;
+    margin-bottom: 12px;
+    font-weight: 600;
+  }
+`;
+
 const List = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [editVisible, setEditVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [secrets, setSecrets] = useState([]);
+  const [editName, setEditName] = useState('');
+  const [editSecret, setEditSecret] = useState('');
+  const [editSecretFrom, setEditSecretFrom] = useState('');
   const [mapList, setMapList] = useState([]);
   const [namespaces, setNamespaces] = useState([]);
+  const [editNamespaces, setEditNamespaces] = useState([]);
   const [form] = useForm();
+  const [editForm] = useForm(); 
   const secretRef = useRef();
   const requestNamespacePrefix = '/api/v1/';
   const requestSecretPrefix = '/apis/experimental.kubesphere.io/v1alpha1/';
@@ -50,7 +80,6 @@ const List = () => {
       setSecrets(res);
       setMapList(mapList);
     });
-    console.log(mapList);
   };
 
   function updateNamespaces() {
@@ -66,6 +95,20 @@ const List = () => {
       setNamespaces(res);
     });
   };
+
+  function updateEdit(s) {
+    request.get(`${requestSecretPrefix}sharingsecrets/${s}`).then(
+      res => { 
+        setEditSecret(`${res ? res.spec.secretRef.name : "-"}`); 
+        setEditSecretFrom(`${res ? res.spec.secretRef.namespace : "-"}`)
+        var tmp = [];
+        for (let i = 0, n = res.spec.target.namespaces.length; i < n; i += 1) {
+          tmp.push({ label: res.spec.target.namespaces[i].name});
+        }
+        setEditNamespaces(tmp);
+      } 
+    );
+  }
 
   const deleteMutation = useMutation(
     data => {
@@ -87,14 +130,20 @@ const List = () => {
   };
 
   const closeShareModal = () => {
+    form.resetFields();
+    setConfirmLoading(false);
     setModalVisible(false);
   };
 
-  const openEditModal = () => {
+  const openEditModal = (s) => {
+    updateEdit(s);
+    updateNamespaces();
     setEditVisible(true);
   };
 
   const closeEditModal = () => {
+    editForm.resetFields();
+    setConfirmLoading(false);
     setEditVisible(false);
   }
 
@@ -102,6 +151,11 @@ const List = () => {
     setConfirmLoading(true);
     form.submit();
   };
+
+  const editOk = () => {
+    setConfirmLoading(true);
+    editForm.submit();
+  }
 
   function searchNamespace(s) {
     for (let i = 0, n = mapList.length; i < n; i += 1) {
@@ -133,29 +187,61 @@ const List = () => {
           },
         },
       };
-      console.log(sharingSecret);
       return request.post(`${requestSecretPrefix}sharingsecrets`, sharingSecret);
     },
     {
       onSuccess: data => {
-        form.resetFields();
-        setConfirmLoading(false);
         closeShareModal();
         secretRef.current.refetch();
       },
     },
   );
 
-  const getActionMenu = row => {
+  const editMutation = useMutation(
+    data => {
+      var namespace = [];
+      for (let i = 0, n = data.targetNamespaces.length; i < n; i += 1) {
+        namespace.push({
+          "name":`${data.targetNamespaces[i]}`
+        });
+      };
+      var editSharingSecret = {
+        apiVersion: "experimental.kubesphere.io/v1alpha1",
+        kind: "SharingSecret",
+        metadata: {
+          name: editName, 
+          resourceVersion: "1257340"
+        },
+        spec: {
+          secretRef: {
+            name: editSecret,
+            namespace: editSecretFrom
+          },
+          target: {
+            namespaces: namespace, 
+          },
+        },
+      };
+      return request.put(`${requestSecretPrefix}sharingsecrets/${editName}`, editSharingSecret);
+    },
+    {
+      onSuccess: data => {
+        closeEditModal();
+        secretRef.current.refetch();
+      },
+    },
+  );
+
+  const getActionMenu = (row) => {
     return (
       <Menu>
         <MenuItem 
           icon={<Pen />} 
-          // onClick={() => {
-            // editMutation.mutate(row.spec.secretRef);
-            // openEditModal();
-          // }}
-          onClick={openEditModal}
+          onClick={() => {
+            editForm.resetFields();
+            setEditName(`${row.metadata.name}`);
+            openEditModal(`${row.metadata.name}`);
+          }}
         >
           {t('EDIT')}
         </MenuItem>
@@ -180,7 +266,7 @@ const List = () => {
       ),
     },
     {
-      title: t('Secret'),
+      title: t('Namespace/Secret'),
       render: (value, row) => (
         <Field value={
           row.spec == undefined ? "-" : row.spec.secretRef.namespace + "/" + row.spec.secretRef.name
@@ -275,37 +361,37 @@ const List = () => {
         visible={editVisible}
         onCancel={closeEditModal}
         confirmLoading={confirmLoading}
-        onOk={onOk}
+        onOk={editOk}
       >
         <FormWrapper>
-          <Form form={form} onFinish={submitMutation.mutate}>
+        <Form form={editForm} onFinish={editMutation.mutate}>
+          <DetailInfo>
+            <div className="detail-title">{t('Name')}</div>
+            <Description>{editName}</Description>
+          </DetailInfo>
+          <DetailInfo>
+            <div className="detail-title">{t('Secret from')}</div>
+            <Description>{editSecretFrom}</Description>
+          </DetailInfo>
+          <DetailInfo>
+            <div className="detail-title">{t('Already selected')}</div>
+            <Descriptions variant="default" data={editNamespaces} />
+          </DetailInfo>
+          <DetailInfo>
+            <div className="detail-title">{t('Reselect')}</div>
             <FormItem
               className="test"
-              name="metadata.name"
-              label={t('Name')}
+              name="targetNamespaces"
             >
-              <a>name</a>
-            </FormItem>
-            <FormItem 
-              className="test"
-              name="spec.secretRef.name" 
-              label={t('Secret')}
-            >
-              <Select display/>
-            </FormItem>
-            <FormItem 
-              className="test" 
-              name="spec.target.namespaces" 
-              label={t('Target')}
-            >
-              <Select
+              <Select 
                 style={{ width: '500px' }} 
                 mode="multiple"
                 options={namespaces}
                 showArrow
               />
             </FormItem>
-          </Form>
+          </DetailInfo>  
+        </Form>
         </FormWrapper>
       </Modal>
     </>
