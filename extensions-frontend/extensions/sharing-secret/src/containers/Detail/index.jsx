@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useQuery } from 'react-query';
 import { Card, Descriptions, Loading } from '@kubed/components';
@@ -14,8 +14,9 @@ export const DetailWrapper = styled.div`
 export const ASide = styled.div`
   position: fixed;
   top: 88px;
-  left: 20px;
+  left: 50%;
   width: 564px;
+  transform: translateX(-50%);
   min-width: 360px;
   padding-right: 16px;
   height: calc(100vh - 100px);
@@ -105,27 +106,37 @@ const DetailInfo = styled.div`
 `;
 
 const Detail = () => {
+  const requestSecretPrefix = '/apis/experimental.kubesphere.io/v1alpha1/';
   const { name } = useParams();
-  console.log(name);
+  const [flag, setFlag] = useState(true);
+  const [namespaces, setNamespaces] = useState([]);
   const { isLoading, data } = useQuery(
-    ['sharing', name],
+    "spec",
     () => {
-      return request(`/apis/experimental.kubesphere.io/v1alpha1/sharingsecrets/${name}`);
+      setNamespaces([]);
+      setFlag(true);
+      return request.get(`${requestSecretPrefix}sharingsecrets/${name}`);
     },
     {
-      staleTime: 60 * 1000,
+      staleTime: 0,
+      cacheTime: 0,
     },
   );
-
-  const dataSource = data?.data;
-  const descriptions = [
-    { label: t('Name'), value: dataSource?.metadata.name },
-    { label: t('Secret from'), value: dataSource?.spec.secretRef.name },
-    { label: t('Namespaces'), value: dataSource?.spec.target },
-  ];
-
   if (isLoading) {
     return <Loading className="page-loading" />;
+  }
+
+  function showNamespaces() {
+    var res = [];
+    for (let i = 0, n = data.spec.target.namespaces.length; i < n; i += 1) {
+      res.push({ label: data.spec.target.namespaces[i].name});
+    }
+    setNamespaces(res);
+  }
+
+  if (flag) {
+    showNamespaces();
+    setFlag(false);
   }
 
   return (
@@ -139,13 +150,20 @@ const Detail = () => {
             </Link>
             <TitleWrapper>
               <Select size={28} />
-              <span>{dataSource?.metadata.name}</span>
+              <span>{name}</span>
             </TitleWrapper>
-            <Description>Sharing Secrets</Description>
           </BaseInfo>
           <DetailInfo>
-            <div className="detail-title">详情</div>
-            <Descriptions variant="unstyled" data={descriptions} />
+            <div className="detail-title">{t('Secret\'s Name')}</div>
+            <Description>{`${data ? data.spec.secretRef.name : "-"}`}</Description>
+          </DetailInfo>
+          <DetailInfo>
+            <div className="detail-title">{t('Secret\'s Namespace')}</div>
+            <Description>{`${data ? data.spec.secretRef.namespace : "-"}`}</Description>
+          </DetailInfo>
+          <DetailInfo>
+            <div className="detail-title">{t('Sharing Namespaces')}</div>
+            <Descriptions variant="default" data={namespaces} />
           </DetailInfo>
         </Card>
       </ASide>
