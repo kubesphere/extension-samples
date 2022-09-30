@@ -57,6 +57,7 @@ const List = () => {
   const [editName, setEditName] = useState('');
   const [editSecret, setEditSecret] = useState('');
   const [editSecretFrom, setEditSecretFrom] = useState('');
+  const [sourceVersion, setSourceVersion] = useState('');
   const [mapList, setMapList] = useState([]);
   const [namespaces, setNamespaces] = useState([]);
   const [editNamespaces, setEditNamespaces] = useState([]);
@@ -100,7 +101,8 @@ const List = () => {
     request.get(`${requestSecretPrefix}sharingsecrets/${s}`).then(
       res => { 
         setEditSecret(`${res ? res.spec.secretRef.name : "-"}`); 
-        setEditSecretFrom(`${res ? res.spec.secretRef.namespace : "-"}`)
+        setEditSecretFrom(`${res ? res.spec.secretRef.namespace : "-"}`);
+        setSourceVersion(`${res ? res.metadata.resourceVersion : "-"}`);
         var tmp = [];
         for (let i = 0, n = res.spec.target.namespaces.length; i < n; i += 1) {
           tmp.push({ label: res.spec.target.namespaces[i].name});
@@ -210,7 +212,7 @@ const List = () => {
         kind: "SharingSecret",
         metadata: {
           name: editName, 
-          resourceVersion: "1257340"
+          resourceVersion: sourceVersion
         },
         spec: {
           secretRef: {
