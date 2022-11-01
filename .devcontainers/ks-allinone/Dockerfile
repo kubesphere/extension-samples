@@ -1,10 +1,12 @@
 FROM ubuntu:22.04 as builder
 
+ARG TARGETARCH
+
 ARG USERNAME
 ARG TOKEN
 
 ENV ARCH=amd64
-ENV HELM_VERSION=v3.9.3
+ENV HELM_VERSION=v3.10.1
 ENV KUBESPHERE_VERSION=ksc
 ENV KUBESPHERE_APISERVER=registry.cn-beijing.aliyuncs.com/kse/ks-apiserver:$KUBESPHERE_VERSION
 ENV KUBESPHERE_CONTROLLER_MANAGER=registry.cn-beijing.aliyuncs.com/kse/ks-controller-manager:$KUBESPHERE_VERSION
@@ -22,13 +24,12 @@ RUN  git clone --branch ksc --depth=1 https://$USERNAME:$TOKEN@github.com/kubesp
      cp -r kse-installer/ks-core .
 
 RUN mkdir images && echo "$KUBESPHERE_APISERVER\n $KUBESPHERE_CONTROLLER_MANAGER\n $KUBESPHERE_CONSOLE\n $KUBECTL\n $COREDNS\n $LOCAL_PATH_PROVISIONER\n $PAUSE" | \
-    ( while read image; do skopeo copy docker://$image docker-archive:./images/$(echo $image | awk -F "/" '{print $NF}' | cut -d ":" -f 1).tar:$image; done )
+    ( while read image; do skopeo copy docker://$image docker-archive:./images/$(echo $image | awk -F "/" '{print $NF}' | cut -d ":" -f 1).tar:$image --override-arch $TARGETARCH; done )
 
-RUN if [ $(arch) == aarch64* ]; then ARCH=arm64; fi && \
-    wget https://get.helm.sh/helm-${HELM_VERSION}-linux-${ARCH}.tar.gz && \
-    tar -zxf helm-${HELM_VERSION}-linux-${ARCH}.tar.gz && \
-    mv linux-${ARCH}/helm . && \
-    rm -rf *linux-${ARCH}* && \
+RUN wget https://get.helm.sh/helm-${HELM_VERSION}-linux-${TARGETARCH}.tar.gz && \
+    tar -zxf helm-${HELM_VERSION}-linux-${TARGETARCH}.tar.gz && \
+    mv linux-${TARGETARCH}/helm . && \
+    rm -rf *linux-${TARGETARCH}* && \
     chmod +x ./helm
 
 
