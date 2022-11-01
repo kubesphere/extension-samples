@@ -39,7 +39,9 @@ jobs:
             USERNAME=${{ secrets.USERNAME }}
             TOKEN=${{ secrets.TOKEN }}
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: |
+            type=raw,value=latest,enable={{is_default_branch}}
+            ${{ steps.meta.outputs.tags }}
           context: .devcontainers/ks-allinone
           platforms: linux/amd64,linux/arm64
 
@@ -67,7 +69,9 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: |
+            type=raw,value=latest,enable={{is_default_branch}}
+            ${{ steps.meta.outputs.tags }}
           context: extensions-backend/employee
           platforms: linux/amd64,linux/arm64
 
@@ -95,6 +99,8 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: |
+            type=raw,value=latest,enable={{is_default_branch}}
+            ${{ steps.meta.outputs.tags }}
           context: .devcontainers/dev-tools
           platforms: linux/amd64,linux/arm64
