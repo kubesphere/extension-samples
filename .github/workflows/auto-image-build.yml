@@ -22,6 +22,12 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
+          tags: |
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=schedule,pattern={{date 'YYYYMMDD'}}
+            type=ref,event=branch
+            type=ref,event=tag
+            type=ref,event=pr
           images: kubespheredev/ks-allinone
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -39,9 +45,7 @@ jobs:
             USERNAME=${{ secrets.USERNAME }}
             TOKEN=${{ secrets.TOKEN }}
           push: true
-          tags: |
-            type=raw,value=latest,enable={{is_default_branch}}
-            ${{ steps.meta.outputs.tags }}
+          tags: ${{ steps.meta.outputs.tags }}
           context: .devcontainers/ks-allinone
           platforms: linux/amd64,linux/arm64
 
@@ -55,6 +59,12 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
+          tags: |
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=schedule,pattern={{date 'YYYYMMDD'}}
+            type=ref,event=branch
+            type=ref,event=tag
+            type=ref,event=pr
           images: kubespheredev/employee-api
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -69,9 +79,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
-          tags: |
-            type=raw,value=latest,enable={{is_default_branch}}
-            ${{ steps.meta.outputs.tags }}
+          tags: ${{ steps.meta.outputs.tags }}
           context: extensions-backend/employee
           platforms: linux/amd64,linux/arm64
 
@@ -85,6 +93,12 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
+          tags: |
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=schedule,pattern={{date 'YYYYMMDD'}}
+            type=ref,event=branch
+            type=ref,event=tag
+            type=ref,event=pr
           images: kubespheredev/dev-tools
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -99,8 +113,6 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
-          tags: |
-            type=raw,value=latest,enable={{is_default_branch}}
-            ${{ steps.meta.outputs.tags }}
+          tags: ${{ steps.meta.outputs.tags }}
           context: .devcontainers/dev-tools
           platforms: linux/amd64,linux/arm64
