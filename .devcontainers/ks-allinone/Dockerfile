@@ -1,29 +1,30 @@
-FROM golang:alpine3.16 as builder
+FROM ubuntu:22.04 as builder
+
+ARG USERNAME
+ARG TOKEN
 
 ENV ARCH=amd64
 ENV HELM_VERSION=v3.9.3
-ENV KUBESPHERE_VERSION=feature-pluggable
-ENV KUBESPHERE_APISERVER=kubespheredev/ks-apiserver:$KUBESPHERE_VERSION
-ENV KUBESPHERE_CONTROLLER_MANAGER=kubespheredev/ks-controller-manager:$KUBESPHERE_VERSION
-ENV KUBESPHERE_CONSOLE=kubespheredev/ks-console:$KUBESPHERE_VERSION
-ENV KUBECTL=kubesphere/kubectl:latest
-ENV COREDNS=coredns/coredns:1.8.7
-ENV LOCAL_PATH_PROVISIONER=rancher/local-path-provisioner:v0.0.21
-ENV PAUSE=rancher/mirrored-pause:3.6
+ENV KUBESPHERE_VERSION=ksc
+ENV KUBESPHERE_APISERVER=registry.cn-beijing.aliyuncs.com/kse/ks-apiserver:$KUBESPHERE_VERSION
+ENV KUBESPHERE_CONTROLLER_MANAGER=registry.cn-beijing.aliyuncs.com/kse/ks-controller-manager:$KUBESPHERE_VERSION
+ENV KUBESPHERE_CONSOLE=registry.cn-beijing.aliyuncs.com/kse/ks-console:$KUBESPHERE_VERSION
+ENV KUBECTL=docker.io/kubesphere/kubectl:latest
+ENV COREDNS=docker.io/coredns/coredns:1.8.7
+ENV LOCAL_PATH_PROVISIONER=docker.io/rancher/local-path-provisioner:v0.0.21
+ENV PAUSE=docker.io/rancher/mirrored-pause:3.6
 
 WORKDIR /workspace
 
-RUN apk --no-cache add bash git jq tar curl
+RUN apt update && apt install -y git jq tar wget skopeo
 
-RUN  git clone --branch feature-pluggable --depth=1 https://github.com/kubesphere/kubesphere.git && \
-     cp -r kubesphere/config/ks-core . && cp kubesphere/config/crds/* ks-core/crds
+RUN  git clone --branch ksc --depth=1 https://$USERNAME:$TOKEN@github.com/kubesphere/kse-installer.git && \
+     cp -r kse-installer/ks-core .
 
-ADD download-frozen-image-v2.sh .
+RUN mkdir images && echo "$KUBESPHERE_APISERVER\n $KUBESPHERE_CONTROLLER_MANAGER\n $KUBESPHERE_CONSOLE\n $KUBECTL\n $COREDNS\n $LOCAL_PATH_PROVISIONER\n $PAUSE" | \
+    ( while read image; do skopeo copy docker://$image docker-archive:./images/$(echo $image | awk -F "/" '{print $NF}' | cut -d ":" -f 1).tar:$image; done )
 
-RUN mkdir images && echo -e "$KUBESPHERE_APISERVER $KUBESPHERE_CONTROLLER_MANAGER $KUBESPHERE_CONSOLE $KUBECTL $COREDNS $LOCAL_PATH_PROVISIONER $PAUSE" | \
-    xargs -t -n1 bash download-frozen-image-v2.sh
-
-RUN if [[ $(arch) == aarch64* ]]; then ARCH=arm64; fi && \
+RUN if [ $(arch) == aarch64* ]; then ARCH=arm64; fi && \
     wget https://get.helm.sh/helm-${HELM_VERSION}-linux-${ARCH}.tar.gz && \
     tar -zxf helm-${HELM_VERSION}-linux-${ARCH}.tar.gz && \
     mv linux-${ARCH}/helm . && \
@@ -31,7 +32,7 @@ RUN if [[ $(arch) == aarch64* ]]; then ARCH=arm64; fi && \
     chmod +x ./helm
 
 
-FROM rancher/k3s:v1.23.9-k3s1
+FROM rancher/k3s:v1.23.10-k3s1
 
 WORKDIR /kubesphere
 
