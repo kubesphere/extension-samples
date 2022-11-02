@@ -12,7 +12,7 @@ on:
       - 'master'
 
 jobs:
-  ks-allinone-image-build:
+  ksc-allinone-image-build:
     concurrency: ci-${{ github.ref }}
     runs-on: ubuntu-latest
     steps:
@@ -28,7 +28,7 @@ jobs:
             type=ref,event=branch
             type=ref,event=tag
             type=ref,event=pr
-          images: kubespheredev/ks-allinone
+          images: kubespheredev/ksc-allinone
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
@@ -46,7 +46,7 @@ jobs:
             TOKEN=${{ secrets.TOKEN }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
-          context: .devcontainers/ks-allinone
+          context: .devcontainers/ksc-allinone
           platforms: linux/amd64,linux/arm64
 
   employee-image-build:
