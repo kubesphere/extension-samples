@@ -1,0 +1,16 @@
+apiVersion: extensions.kubesphere.io/v1alpha1
+kind: ReverseProxy
+metadata:
+  name: grafana
+spec:
+  directives:
+    headerUp:
+      - -Authorization
+    stripPathPrefix: /proxy/grafana
+  matcher:
+    method: '*'
+    path: /proxy/grafana/*
+  upstream:
+    url: http://grafana.monitoring.svc
+status:
+  state: Available
