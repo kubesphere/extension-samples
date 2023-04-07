@@ -1,9 +1,8 @@
 apiVersion: v1
-name: grafana-ext
+name: grafana
 version: 0.1.0
 displayName:
-  zh: 示例扩展组件
-  en: Sample Extension
+  en: Grafana
 description:
   zh: 这是一个示例扩展组件，这是它的描述
   en: This is a sample extension, and this is its description

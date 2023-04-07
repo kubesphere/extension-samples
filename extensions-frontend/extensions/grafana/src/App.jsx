@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Loading } from '@kubed/components';
 
-const FRAME_URL = '/proxy/grafana/';
+const FRAME_URL = '/proxy/grafana/d/node_exporter_nodes/node-exporter-nodes?orgId=1&refresh=5s&kiosk';
 
 export default function App() {
   const [loading, setLoading] = useState(true);
