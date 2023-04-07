@@ -6,11 +6,12 @@ spec:
   directives:
     headerUp:
       - -Authorization
+      - +X-WEBAUTH-USER admin
     stripPathPrefix: /proxy/grafana
   matcher:
     method: '*'
     path: /proxy/grafana/*
   upstream:
-    url: http://grafana.monitoring.svc
+    url: http://grafana.{{ .Release.Namespace }}.svc
 status:
   state: Available
