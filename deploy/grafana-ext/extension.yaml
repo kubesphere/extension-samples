@@ -2,10 +2,12 @@ apiVersion: v1
 name: grafana
 version: 0.1.0
 displayName:
+  zh: Grafana
   en: Grafana
 description:
   zh: 这是一个示例扩展组件，这是它的描述
   en: This is a sample extension, and this is its description
+category: monitoring
 keywords:
   - Monitoring
 home: https://kubesphere.io
@@ -13,9 +15,23 @@ sources:
   - https://github.com/kubesphere
 kubeVersion: ">=1.19.0"
 ksVersion: ">=3.0.0"
+maintainers:
+  - name: "KubeSphere"
+    email: "kubesphere@kubesphere.cloud"
+    url: "https://kubesphere.io"
+provider:
+  zh:
+    name: "青云科技"
+    email: "contactus@yunify.com"
+    url: "https://www.qingcloud.com"
+  en:
+    name: "QingCloud"
+    email: "contactus@yunify.com"
+    url: "https://www.qingcloud.com"
 dependencies:
   - name: frontend
     condition: frontend.enabled
   - name: backend
     condition: backend.enabled
-icon: ./favicon.svg
+staticFileDirectory: static
+icon: ./static/favicon.svg
