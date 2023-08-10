@@ -1,0 +1,10 @@
+apiVersion: extensions.kubesphere.io/v1alpha1
+kind: APIService
+metadata:
+  name: v1alpha1.employee.kubesphere.io
+spec:
+  group: employee.kubesphere.io
+  version: v1alpha1
+  url: http://{{ include "backend.fullname" . }}.{{ .Release.Namespace }}.svc
+status:
+  state: Available
