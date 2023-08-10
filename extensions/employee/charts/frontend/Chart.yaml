@@ -1,0 +1,11 @@
+annotations:
+  extensions.kubesphere.io/foo: bar
+apiVersion: v1
+appVersion: 0.0.1
+description: Frontend of employee extension.
+home: https://kubesphere.io
+name: frontend
+sources:
+- https://github.com/kubesphere
+type: application
+version: 0.0.1
