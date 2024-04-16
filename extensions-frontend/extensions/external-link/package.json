@@ -1,0 +1,10 @@
+{
+  "name": "external-link",
+  "version": "1.0.0",
+  "description": "Hello external-link",
+  "homepage": "",
+  "author": "",
+  "main": "dist/index.js",
+  "files": ["dist"],
+  "dependencies": {}
+}
