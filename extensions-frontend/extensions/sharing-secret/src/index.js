@@ -11,7 +11,7 @@ const menus = [
     order: 0,
     desc: 'Sharing secrets between namespaces',
     skipAuth: true,
-  }
+  },
 ];
 
 const extensionConfig = {

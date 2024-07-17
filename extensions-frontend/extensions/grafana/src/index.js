@@ -10,7 +10,7 @@ const menus = [
     order: 0,
     desc: 'Grafana',
     skipAuth: true,
-  }
+  },
 ];
 
 const extensionConfig = {

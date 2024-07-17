@@ -10,7 +10,7 @@ const menus = [
     order: 0,
     desc: 'Say hi to the world!',
     skipAuth: true,
-  }
+  },
 ];
 
 const extensionConfig = {
