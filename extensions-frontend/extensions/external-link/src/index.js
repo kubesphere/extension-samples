@@ -14,6 +14,4 @@ const menus = [
 
 const extensionConfig = { routes, menus };
 
-globals.context.registerExtension(extensionConfig);
-
-// export default extensionConfig;
+export default extensionConfig;
